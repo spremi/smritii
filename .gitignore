@@ -1,0 +1,24 @@
+#
+# smritii
+#
+# File & directories to be ignored. (See: http://help.github.com/ignore-files/)
+#
+
+# Backup and swap files
+*~
+*.swp
+*.swo
+*.kate-swp
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Patch & diff files
+*.patch
+*.diff
+*.orig
+*.rej
+
+# Specifically, don't ignore these files
+!.gitignore
