@@ -11,10 +11,12 @@ from flask import Flask, abort, jsonify, render_template, request, send_file
 from http import HTTPStatus
 from pathlib import Path
 
+import hashlib
 import json
 import os
 import piexif
 
+from .cache import Cache
 from . import constants as const
 
 BASE_ALBUM = ''
@@ -50,6 +52,12 @@ Extension for thumbnails.
 DIR_INFO = 'info'
 """
 Base (sub)directory for info.
+"""
+
+AlbumCache = Cache()
+"""
+Cache for directory listing.
+This helps faster response to UI - without reading directories repeatedly.
 """
 
 
@@ -366,6 +374,105 @@ def create_app(config=None):
             json.dump(info, f, indent=2)
 
         return jsonify(info)
+
+    @app.route('/data', methods=['POST'])
+    def get_data():
+        global BASE_ALBUM, BASE_META
+        global AlbumCache
+
+        data = request.get_json()
+
+        if 'location' not in data:
+            abort(HTTPStatus.BAD_REQUEST)
+
+        if 'refresh' in data:
+            refresh = 0 if data['refresh'] in (None, '', '0') else 1
+        else:
+            refresh = 0
+
+        location = data['location']
+
+        if location.startswith('/'):
+            location = location[1:]
+
+        #
+        # Weed out incorrect paths early.
+        #
+        full_dir = os.path.abspath(os.path.join(BASE_ALBUM, location))
+
+        if not (full_dir.startswith(BASE_ALBUM) and os.path.isdir(full_dir)):
+            abort(HTTPStatus.NOT_FOUND)
+
+        #
+        # Attempt to fetch directory information exists in cache.
+        #
+        cache_key = f'{location}'
+        cached_data = AlbumCache.get(cache_key)
+
+        if cached_data and refresh == 0:
+            albums = cached_data['albums']
+            images = cached_data['images']
+
+        else:
+            dirs = []
+            files = []
+
+            for item in os.listdir(full_dir):
+                item_full = os.path.join(full_dir, item)
+                item_link = item_full.split(BASE_ALBUM, 1)[1]
+
+                # Collect files with supported extensions
+                if os.path.isfile(item_full):
+                    if item.lower().endswith(const.EXTN_SUPPORTED):
+                        files.append(item_link)
+
+                # Collect directories (albums)
+                elif os.path.isdir(item_full):
+                    dirs.append(item_link)
+
+            dirs.sort()
+            files.sort()
+
+            #
+            # Add sequence number, MD5 hash to each directory, file
+            # MD5 hash works as regeneratable unique id.
+            #
+            albums = []
+            images = []
+
+            for d, dir_name in enumerate(dirs):
+                path = os.path.join(location, dir_name)
+
+                enc_str = path.encode()
+                enc_hash = hashlib.md5(enc_str).hexdigest()
+
+                albums.append({
+                    'id': enc_hash,
+                    'seq': d,
+                    'name': dir_name,
+                })
+
+            for f, file_name in enumerate(files):
+                path = os.path.join(location, file_name)
+
+                enc_str = path.encode()
+                enc_hash = hashlib.md5(enc_str).hexdigest()
+
+                images.append({
+                    'id': enc_hash,
+                    'seq': f,
+                    'name': file_name,
+                })
+
+            #
+            # Save list of albums & images in cache.
+            #
+            AlbumCache.set(location, {'albums': albums, 'images': images})
+
+        return jsonify({
+            'albums': albums,
+            'images': images,
+        })
 
     #
     # Return application object.
