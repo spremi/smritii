@@ -1,1 +1,5 @@
-<p>albums works!</p>
+@if(albums && albums.length > 0) {
+  @for (album of albums; track album.id;) {
+    <sp-album [data]="album"></sp-album>
+  }
+}
