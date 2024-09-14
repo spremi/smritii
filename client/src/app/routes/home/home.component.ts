@@ -16,6 +16,7 @@ import { Image } from '@models/image';
 import { ViewRequest } from '@models/view-request';
 
 import { AlbumsComponent } from '@parts/albums/albums.component';
+import { ImagesComponent } from '@parts/images/images.component';
 import { PebblesComponent } from '@parts/pebbles/pebbles.component';
 
 import { DataService } from '@services/data.service';
@@ -26,6 +27,7 @@ import { StateService } from '@services/state.service';
   standalone: true,
   imports: [
     AlbumsComponent,
+    ImagesComponent,
     PebblesComponent,
   ],
   templateUrl: './home.component.html',
