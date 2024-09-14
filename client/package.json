@@ -1,7 +1,12 @@
 {
   "name": "smritii",
   "version": "0.0.0",
-  "scripts": {
+  "author": {
+    "name": "Sanjeev Premi",
+    "email": "spremi@ymail.com",
+    "url": "https://github.com/spremi"
+  },
+    "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
