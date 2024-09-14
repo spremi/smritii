@@ -1,1 +1,5 @@
-<p>images works!</p>
+@if(images && images.length > 0) {
+  @for (image of images; track image.id;) {
+    <sp-image [data]="image"></sp-image>
+  }
+}
