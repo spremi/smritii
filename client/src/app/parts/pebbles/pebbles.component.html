@@ -1,1 +1,8 @@
-<p>pebbles works!</p>
+@for (pebble of pebbles; track pebble.tag; let last = $last;) {
+  @if (!last) {
+    <span class="link" (click)="browse(pebble.link)">{{ pebble.tag }}</span>
+    <span class="slash">&#10142;</span>
+  } @else {
+    <span>{{ pebble.tag }}</span>
+  }
+}
