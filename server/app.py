@@ -8,6 +8,7 @@
 
 from PIL import Image, ImageOps
 from flask import Flask, abort, jsonify, render_template, request, send_file
+from flask_cors import CORS
 from http import HTTPStatus
 from pathlib import Path
 
@@ -68,6 +69,7 @@ def create_app(config=None):
     global BASE_ALBUM, BASE_META
 
     app = Flask(__name__)
+    cors = CORS(app)
 
     BASE_ALBUM = os.environ.get('BASE_ALBUM')
     BASE_META = os.environ.get('BASE_META')
