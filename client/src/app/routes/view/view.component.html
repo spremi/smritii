@@ -1,1 +1,17 @@
-<p>view works!</p>
+<sp-canvas></sp-canvas>
+
+@if (image) {
+  <div>{{ image.id }}</div>
+  <div>{{ image.name }}</div>
+  <div>{{ image.seq }}</div>
+}
+
+@if (images && index > 0) {
+  <div class="nav prev" (click)="previous()">Previous</div>
+}
+
+@if (images && index < images.length - 1) {
+  <div class="nav next" (click)="next()">Next</div>
+}
+
+<div class="close" (click)="close()">Close</div>
