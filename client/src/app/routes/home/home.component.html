@@ -1,2 +1,4 @@
 <sp-pebbles></sp-pebbles>
-<p>home works!</p>
+@if(albums && albums.length > 0) {
+  <sp-albums [albums]="albums"></sp-albums>
+}
