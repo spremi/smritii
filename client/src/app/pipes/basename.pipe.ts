@@ -1,3 +1,12 @@
+//
+// [smritii]
+//
+// Sanjeev Premi <spremi@ymail.com>
+//
+// BSD-3-Clause License
+//
+
+
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
@@ -6,8 +15,12 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class BasenamePipe implements PipeTransform {
 
-  transform(value: unknown, ...args: unknown[]): unknown {
-    return null;
-  }
+  transform(path: string): string {
+    const lastSep = path.lastIndexOf('/');
+    if (lastSep === -1) {
+      return path;
+    }
 
+    return path.substring(lastSep + 1);
+  }
 }
