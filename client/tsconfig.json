@@ -3,6 +3,30 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "@env/*": [
+        "environments/*"
+      ],
+      "@models/*": [
+        "app/models/*"
+      ],
+      "@dictums/*": [
+        "app/dictums/*"
+      ],
+      "@parts/*": [
+        "app/parts/*"
+      ],
+      "@pipes/*": [
+        "app/pipes/*"
+      ],
+      "@routes/*": [
+        "app/routes/*"
+      ],
+      "@services/*": [
+        "app/services/*"
+      ]
+    },
     "outDir": "./dist/out-tsc",
     "strict": true,
     "noImplicitOverride": true,
