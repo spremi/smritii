@@ -1,10 +1,4 @@
-<sp-canvas></sp-canvas>
-
-@if (image) {
-  <div>{{ image.id }}</div>
-  <div>{{ image.name }}</div>
-  <div>{{ image.seq }}</div>
-}
+<sp-canvas [data]="image"></sp-canvas>
 
 @if (images && index > 0) {
   <div class="nav prev" (click)="previous()">Previous</div>
