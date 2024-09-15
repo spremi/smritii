@@ -4,15 +4,30 @@
   margin: 16px
   align-items: center
 
+  color: #a0a0a0
+
+  transition: box-shadow 350ms
+
   .icon
     width: 128px
     height: 128px
+    background-image: url('/icons/smritii-folder.png')
+    transform: scale(0.8, 0.8)
+    transition: transform 350ms
 
   .name
     padding: 4px
     text-align: center
 
     font-size: 16px
+    transition: color 350ms
 
   &:hover
     cursor: pointer
+    box-shadow: 0px 0px 32px 16px rgba(200, 26, 235, 0.5)
+
+    .icon
+      transform: scale(1, 1)
+
+    .name
+      color: #ffffff
