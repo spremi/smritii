@@ -7,7 +7,7 @@
 //
 
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { first, Subscription, switchMap, tap } from 'rxjs';
 
@@ -48,6 +48,27 @@ export class ViewComponent implements OnInit, OnDestroy {
   isPlaying = false;
 
   showInfo = false;
+
+  /**
+   * Whether tools are visible?
+   */
+  toolsVisible = true;
+
+  /**
+   * Whether navigation icons are visible?
+   */
+
+  navVisible = true;
+
+  /**
+   * ID of timer used for tools visibility
+   */
+  private toolsTimer: number | undefined;
+
+  /**
+   * ID of timer used for navigation visibility
+   */
+  private navTimer: number | undefined;
 
   private sub: Subscription | undefined;
 
@@ -99,6 +120,9 @@ export class ViewComponent implements OnInit, OnDestroy {
 
       this.index = this.images.findIndex(o => o.id === this.image?.id);
     });
+
+    this.resetToolsTimer();
+    this.resetNavTimer();
   }
 
   ngOnDestroy(): void {
@@ -175,5 +199,36 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   stopShow(): void {
+  }
+
+  @HostListener('document:mousemove', ['$event'])
+  onMouseMove(): void {
+    this.toolsVisible = true;
+    this.navVisible = true;
+
+    this.resetToolsTimer();
+    this.resetNavTimer();
+  }
+
+  /**
+   * Reset timer used to toggle tools visibility.
+   */
+  private resetToolsTimer(): void {
+    clearTimeout(this.toolsTimer);
+
+    this.toolsTimer = window.setTimeout(() => {
+      this.toolsVisible = false;
+    }, 8000);
+  }
+
+  /**
+   * Reset timer used to toggle navigation visibility.
+   */
+  private resetNavTimer(): void {
+    clearTimeout(this.navTimer);
+
+    this.navTimer = window.setTimeout(() => {
+      this.navVisible = false;
+    }, 10000);
   }
 }

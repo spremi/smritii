@@ -1,14 +1,19 @@
 <sp-canvas [data]="image"></sp-canvas>
 
 @if (images && index > 0) {
-  <img class="nav prev" src="/icons/arrow_left_alt_32dp.svg" (click)="previous()" />
+  <img class="nav prev"
+       [class.hidden]="!toolsVisible"
+       src="/icons/arrow_left_alt_32dp.svg"
+       (click)="previous()" />
 }
 
 @if (images && index < images.length - 1) {
-  <img class="nav next" src="/icons/arrow_right_alt_32dp.svg" (click)="next()" />
+  <img class="nav next"
+       [class.hidden]="!toolsVisible"
+       src="/icons/arrow_right_alt_32dp.svg" (click)="next()" />
 }
 
-<div class="tools">
+<div class="tools" [class.hidden]="!toolsVisible">
   <img src="/icons/description_32dp.svg" (click)="toggleInfo()">
 
   <img src="/icons/zoom_in_32dp.svg" (click)="zoomIn()">
