@@ -44,6 +44,11 @@ export class ViewComponent implements OnInit, OnDestroy {
    */
   index = 0;
 
+  isFullScreen = !!document.fullscreenElement;
+  isPlaying = false;
+
+  showInfo = false;
+
   private sub: Subscription | undefined;
 
   constructor(
@@ -133,5 +138,42 @@ export class ViewComponent implements OnInit, OnDestroy {
     this.stateSvc.clearSelected();
 
     this.router.navigate(['']);
+  }
+
+  fullScreen(): void {
+    const doc = document.documentElement;
+
+    if ('requestFullscreen' in doc) {
+      doc.requestFullscreen();
+    }
+
+    this.isFullScreen = true;
+  }
+
+  restoreScreen(): void {
+    if ('exitFullscreen' in document) {
+      document.exitFullscreen();
+    }
+
+    this.isFullScreen = false;
+  }
+
+  toggleInfo(): void {
+    this.showInfo = !this.showInfo;
+  }
+
+  zoomIn(): void {
+  }
+
+  zoomOut(): void {
+  }
+
+  startShow(): void {
+  }
+
+  pauseShow(): void {
+  }
+
+  stopShow(): void {
   }
 }
