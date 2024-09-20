@@ -12,9 +12,11 @@ import { Router } from '@angular/router';
 import { first, Subscription, switchMap, tap } from 'rxjs';
 
 import { Image } from '@models/image';
+import { ImageInfo } from '@models/image-info';
 import { ViewRequest } from '@models/view-request';
 
 import { CanvasComponent } from '@parts/canvas/canvas.component';
+import { ImageInfoComponent } from '@parts/image-info/image-info.component';
 
 import { DataService } from '@services/data.service';
 import { StateService } from '@services/state.service';
@@ -24,6 +26,7 @@ import { StateService } from '@services/state.service';
   standalone: true,
   imports: [
     CanvasComponent,
+    ImageInfoComponent
   ],
   templateUrl: './view.component.html',
   styleUrl: './view.component.sass'
@@ -48,6 +51,11 @@ export class ViewComponent implements OnInit, OnDestroy {
   isPlaying = false;
 
   showInfo = false;
+
+  /**
+   * Information about selected image.
+   */
+  imageInfo: ImageInfo | undefined;
 
   /**
    * Whether tools are visible?
@@ -154,6 +162,9 @@ export class ViewComponent implements OnInit, OnDestroy {
       this.index += 1;
       this.image = this.images[this.index];
 
+      this.showInfo = false;
+      this.imageInfo = undefined;
+
       // Keep the state consistent.
       this.stateSvc.setSelected(this.image);
     }
@@ -166,6 +177,9 @@ export class ViewComponent implements OnInit, OnDestroy {
     if (this.images) {
       this.index -= 1;
       this.image = this.images[this.index];
+
+      this.showInfo = false;
+      this.imageInfo = undefined;
 
       // Keep the state consistent.
       this.stateSvc.setSelected(this.image);
@@ -200,7 +214,15 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   toggleInfo(): void {
-    this.showInfo = !this.showInfo;
+    if (this.image) {
+      this.showInfo = !this.showInfo;
+
+      this.dataSvc.getImageInfo(this.image.name).pipe(
+        first()
+      ).subscribe(o => {
+        this.imageInfo = o;
+      });
+    }
   }
 
   zoomIn(): void {

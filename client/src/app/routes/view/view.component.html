@@ -35,3 +35,7 @@
 
   <img src="/icons/close_32dp.svg" (click)="close()">
 </div>
+
+@if (showInfo && imageInfo) {
+  <sp-image-info class="info" [info]="imageInfo"></sp-image-info>
+}
