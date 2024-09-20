@@ -204,9 +204,11 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   zoomIn(): void {
+    this.stateSvc.zoomIn();
   }
 
   zoomOut(): void {
+    this.stateSvc.zoomOut();
   }
 
   startShow(): void {
