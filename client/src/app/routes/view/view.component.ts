@@ -70,6 +70,11 @@ export class ViewComponent implements OnInit, OnDestroy {
    */
   private navTimer: number | undefined;
 
+  /**
+   * ID of interval used for slide show.
+   */
+  private showInterval: number | undefined;
+
   private sub: Subscription | undefined;
 
   constructor(
@@ -127,6 +132,18 @@ export class ViewComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
+
+    if (this.toolsTimer) {
+      window.clearTimeout(this.toolsTimer);
+    }
+
+    if (this.navTimer) {
+      window.clearTimeout(this.navTimer);
+    }
+
+    if (this.showInterval) {
+      window.clearInterval(this.showInterval);
+    }
   }
 
   /**
@@ -193,12 +210,31 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   startShow(): void {
+    if (this.images) {
+      const lastIndex = this.images.length - 1;
+
+      this.showInterval = window.setInterval(() => {
+        if (this.index < lastIndex) {
+          this.next();
+        } else {
+          // The index will be incremented to 0 in "next()"
+          this.index = -1;
+        }
+      }, 10000);
+
+      this.isPlaying = true;
+    }
   }
 
   pauseShow(): void {
   }
 
   stopShow(): void {
+    if (this.showInterval) {
+      window.clearInterval(this.showInterval);
+    }
+
+    this.isPlaying = false;
   }
 
   @HostListener('document:mousemove', ['$event'])
