@@ -7,12 +7,13 @@
 //
 
 
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 
-import { first } from 'rxjs';
+import { first, Subscription } from 'rxjs';
 
 import { Image } from '@models/image';
 import { DataService } from '@services/data.service';
+import { StateService } from '@services/state.service';
 
 @Component({
   selector: 'sp-canvas',
@@ -21,16 +22,29 @@ import { DataService } from '@services/data.service';
   templateUrl: './canvas.component.html',
   styleUrl: './canvas.component.sass'
 })
-export class CanvasComponent implements OnInit, OnChanges {
+export class CanvasComponent implements OnInit, OnDestroy, OnChanges {
   @Input() data: Image | undefined;
 
   imageUri = '';
 
-  constructor(private dataSvc: DataService) {
+  scale = 1;
+
+  subZoom!: Subscription;
+
+  constructor(
+    private dataSvc: DataService,
+    private stateSvc: StateService
+  ) {
   }
 
   ngOnInit(): void {
     this.fetchImage();
+
+    this.subZoom = this.stateSvc.getZoom().subscribe(v => this.scale = v);
+  }
+
+  ngOnDestroy(): void {
+    this.subZoom?.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
