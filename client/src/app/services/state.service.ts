@@ -44,6 +44,8 @@ export class StateService {
 
   setSelected(item: Image): void {
     this.selected$.next(item);
+
+    this.zoomNone();
   }
 
   getSelected(): Observable<Image> {
