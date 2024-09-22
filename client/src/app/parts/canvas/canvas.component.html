@@ -1,4 +1,6 @@
-@if(data) {
-  <img [style.transform]="'translate(-50%, -50%) scale(' + scale + ')'"
-  [src]="imageUri" />
+@if(data && imageUri) {
+  <img
+    [src]="imageUri"
+    [style.transform]="'translate(-50%, -50%) scale(' + scale + ')'"
+    [@fadeInOut] />
 }

@@ -7,9 +7,10 @@
 //
 
 
+import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 
-import { first, Subscription } from 'rxjs';
+import { delay, first, Subscription } from 'rxjs';
 
 import { Image } from '@models/image';
 import { DataService } from '@services/data.service';
@@ -19,6 +20,21 @@ import { StateService } from '@services/state.service';
   selector: 'sp-canvas',
   standalone: true,
   imports: [],
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('1s', style({
+          opacity: 1
+        }))
+      ]),
+      transition(':leave', [
+        animate('1s', style({
+          opacity: 0
+        }))
+      ])
+    ])
+  ],
   templateUrl: './canvas.component.html',
   styleUrl: './canvas.component.sass'
 })
@@ -58,15 +74,22 @@ export class CanvasComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private fetchImage(): void {
+    //
+    // This value must be clieared to force revalution of "@if()" in the template.
+    // Revaluation triggers the enter, leave animations.
+    //
+    this.imageUri = '';
+
     if (this.data) {
       const path = this.data.name;
       const location = path.charAt(0) === '/' ? path.substring(1) : path;
 
-      this.dataSvc.getImage(location).pipe(first()).subscribe(b => {
+      this.dataSvc.getImage(location).pipe(
+        first(),
+        delay(100)    // Delay for animation to kick-in.
+      ).subscribe(b => {
         if (b) {
           this.imageUri = URL.createObjectURL(b);
-        } else {
-          this.imageUri = '';
         }
       });
     }
