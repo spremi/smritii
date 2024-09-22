@@ -7,6 +7,7 @@
 //
 
 
+import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { first, Subscription, switchMap, tap } from 'rxjs';
@@ -27,6 +28,21 @@ import { StateService } from '@services/state.service';
   imports: [
     CanvasComponent,
     ImageInfoComponent
+  ],
+  animations: [
+    trigger('infoInOut', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)' }),
+        animate('500ms ease-in', style({
+          transform: 'translateX(0%)'
+        }))
+      ]),
+      transition(':leave', [
+        animate('500ms ease-out', style({
+          transform: 'translateX(100%)'
+        }))
+      ])
+    ])
   ],
   templateUrl: './view.component.html',
   styleUrl: './view.component.sass'
