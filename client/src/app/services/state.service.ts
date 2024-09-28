@@ -25,6 +25,8 @@ export class StateService {
 
   private zoom = 1;
 
+  private splash = false;
+
   constructor() { }
 
   setLocation(location: string): void {
@@ -77,5 +79,13 @@ export class StateService {
     return this.zoom$.asObservable().pipe(
       distinctUntilChanged()
     );
+  }
+
+  getSplash(): boolean {
+    return this.splash;
+  }
+
+  setSplash() {
+    this.splash = true;
   }
 }
