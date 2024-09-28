@@ -18,7 +18,7 @@ import os
 import piexif
 
 from local.cache import Cache
-from . import constants as const
+from local.constants import *
 
 BASE_ALBUM = ''
 """
@@ -134,7 +134,7 @@ def create_app(config=None):
 
         _, extn = os.path.splitext(item_path)
 
-        if extn in const.EXTN_IMAGE:
+        if extn in EXTN_IMAGE:
             im = Image.open(item_path)
             im = ImageOps.exif_transpose(im)
             im.thumbnail(THUMB_SIZE)
@@ -142,10 +142,10 @@ def create_app(config=None):
 
             return send_file(thumb_path)
 
-        if extn in const.EXTN_AUDIO:
+        if extn in EXTN_AUDIO:
             return send_file('static/images/audio-thumb.png')
 
-        if extn in const.EXTN_VIDEO:
+        if extn in EXTN_VIDEO:
             return send_file('static/images/video-thumb.png')
 
         return send_file('static/images/404.png')
@@ -181,7 +181,7 @@ def create_app(config=None):
         arg_stem = arg_location.stem
         arg_path = arg_location.parent
 
-        info_name = const.INFO_PREFIX + arg_stem + const.INFO_EXTN
+        info_name = INFO_PREFIX + arg_stem + INFO_EXTN
 
         info_path = os.path.abspath(os.path.join(BASE_META, DIR_INFO, arg_path, info_name))
 
@@ -202,8 +202,8 @@ def create_app(config=None):
         }
 
         exif_data = {
-            const.T_FILE_NAME: arg_name,
-            const.T_FILE_SIZE: stat.st_size
+            T_FILE_NAME: arg_name,
+            T_FILE_SIZE: stat.st_size
         }
 
         im = Image.open(image_path)
@@ -219,35 +219,35 @@ def create_app(config=None):
                     tag_name = piexif.TAGS['0th'][tag]["name"]
 
                     if tag_name == 'Make':
-                        exif_data[const.T_CAMERA_MAKE] = exif_dict['0th'][tag].decode('utf-8')
+                        exif_data[T_CAMERA_MAKE] = exif_dict['0th'][tag].decode('utf-8')
 
                     if tag_name == 'Model':
-                        exif_data[const.T_CAMERA_MODEL] = exif_dict['0th'][tag].decode('utf-8')
+                        exif_data[T_CAMERA_MODEL] = exif_dict['0th'][tag].decode('utf-8')
 
                     if tag_name == 'Orientation':
                         v = exif_dict['0th'][tag]
 
-                        exif_data[const.T_ORIENTATION] = const.ExifOrientation[v]
+                        exif_data[T_ORIENTATION] = ExifOrientation[v]
 
                     if tag_name == 'ResolutionUnit':
                         v = exif_dict['0th'][tag]
 
-                        exif_data[const.T_RESOLUTION_UNIT] = const.ExifResolutionUnit.get(v, f'({v})')
+                        exif_data[T_RESOLUTION_UNIT] = ExifResolutionUnit.get(v, f'({v})')
 
                     if tag_name == 'XResolution':
                         v = exif_dict['0th'][tag]
                         r = v[0] / v[1]
 
-                        exif_data[const.T_X_RESOLUTION] = f'{r:.0f}'
+                        exif_data[T_X_RESOLUTION] = f'{r:.0f}'
 
                     if tag_name == 'YResolution':
                         v = exif_dict['0th'][tag]
                         r = v[0] / v[1]
 
-                        exif_data[const.T_Y_RESOLUTION] = f'{r:.0f}'
+                        exif_data[T_Y_RESOLUTION] = f'{r:.0f}'
 
                     if tag_name == 'ImageDescription':
-                        exif_data[const.T_DESCRIPTION] = exif_dict['0th'][tag].decode('utf-8').strip()
+                        exif_data[T_DESCRIPTION] = exif_dict['0th'][tag].decode('utf-8').strip()
 
                 if 'Exif' in exif_dict:
                     for tag in exif_dict['Exif']:
@@ -255,84 +255,84 @@ def create_app(config=None):
                         tag_name = piexif.TAGS['Exif'][tag]["name"]
 
                         if tag_name == 'ExifVersion':
-                            exif_data[const.T_EXIF_VERSION] = exif_dict['Exif'][tag].decode('utf-8')
+                            exif_data[T_EXIF_VERSION] = exif_dict['Exif'][tag].decode('utf-8')
 
                         if tag_name == 'PixelXDimension':
-                            exif_data[const.T_IMAGE_WIDTH] = exif_dict['Exif'][tag]
+                            exif_data[T_IMAGE_WIDTH] = exif_dict['Exif'][tag]
 
                         if tag_name == 'PixelYDimension':
-                            exif_data[const.T_IMAGE_HEIGHT] = exif_dict['Exif'][tag]
+                            exif_data[T_IMAGE_HEIGHT] = exif_dict['Exif'][tag]
 
                         if tag_name == 'DateTimeOriginal':
-                            exif_data[const.T_TS_ORIGINAL] = exif_dict['Exif'][tag].decode('utf-8')
+                            exif_data[T_TS_ORIGINAL] = exif_dict['Exif'][tag].decode('utf-8')
 
                         if tag_name == 'FocalLength':
                             v = exif_dict['Exif'][tag]
                             r = v[0] / v[1]
 
-                            exif_data[const.T_FOCAL_LENGTH] = f'{r:.1f} mm'
+                            exif_data[T_FOCAL_LENGTH] = f'{r:.1f} mm'
 
                         if tag_name == 'ISOSpeedRatings':
-                            exif_data[const.T_ISO_SPEED] = exif_dict['Exif'][tag]
+                            exif_data[T_ISO_SPEED] = exif_dict['Exif'][tag]
 
                         if tag_name == 'Flash':
                             v = exif_dict['Exif'][tag]
 
-                            exif_data[const.T_FLASH] = const.ExifFlash.get(v, f'({v})')
+                            exif_data[T_FLASH] = ExifFlash.get(v, f'({v})')
 
                         if tag_name == 'ExposureMode':
                             v = exif_dict['Exif'][tag]
 
-                            exif_data[const.T_EXPOSURE_MODE] = const.ExifExposureMode.get(v, f'({v})')
+                            exif_data[T_EXPOSURE_MODE] = ExifExposureMode.get(v, f'({v})')
 
                         if tag_name == 'ExposureTime':
                             v = exif_dict['Exif'][tag]
                             r = v[0] / v[1]
 
-                            exif_data[const.T_EXPOSURE_TIME] = f'{r:.8f}'
+                            exif_data[T_EXPOSURE_TIME] = f'{r:.8f}'
 
                         if tag_name == 'ExposureBiasValue':
                             v = exif_dict['Exif'][tag]
                             r = v[0] / v[1]
 
-                            exif_data[const.T_EXPOSURE_BIAS] = f'{r:.1f} EV'
+                            exif_data[T_EXPOSURE_BIAS] = f'{r:.1f} EV'
 
                         if tag_name == 'FNumber':
                             v = exif_dict['Exif'][tag]
                             r = v[0] / v[1]
 
-                            exif_data[const.T_F_NUMBER] = f'{r:2.1f}'
+                            exif_data[T_F_NUMBER] = f'{r:2.1f}'
 
                         if tag_name == 'MeteringMode':
                             v = exif_dict['Exif'][tag]
 
-                            exif_data[const.T_METERING_MODE] = const.ExifMeteringMode.get(v, f'({v})')
+                            exif_data[T_METERING_MODE] = ExifMeteringMode.get(v, f'({v})')
 
                         if tag_name == 'LightSource':
                             v = exif_dict['Exif'][tag]
 
-                            exif_data[const.T_LIGHT_SOURCE] = const.ExifLightSource[v]
+                            exif_data[T_LIGHT_SOURCE] = ExifLightSource[v]
 
                         if tag_name == 'WhiteBalance':
                             v = exif_dict['Exif'][tag]
 
-                            exif_data[const.T_WHITE_BALANCE] = const.ExifWhiteBalance[v]
+                            exif_data[T_WHITE_BALANCE] = ExifWhiteBalance[v]
 
                         if tag_name == 'DigitalZoomRatio':
                             v = exif_dict['Exif'][tag]
                             r = v[0] / v[1]
 
-                            exif_data[const.T_DIGITAL_ZOOM] = f'{r:2.1f}'
+                            exif_data[T_DIGITAL_ZOOM] = f'{r:2.1f}'
 
                         if tag_name == 'UserComment':
-                            exif_data[const.T_USER_COMMENT] = exif_dict['Exif'][tag].decode('utf-8')
+                            exif_data[T_USER_COMMENT] = exif_dict['Exif'][tag].decode('utf-8')
 
                 if 'GPS' in exif_dict:
                     for tag in exif_dict['GPS']:
                         tag_name = piexif.TAGS['GPS'][tag]["name"]
 
                         if tag_name == 'GPSLatitudeRef':
-                            exif_data[const.T_GPS_LATITUDE_REF] = exif_dict['GPS'][tag].decode('utf-8')
+                            exif_data[T_GPS_LATITUDE_REF] = exif_dict['GPS'][tag].decode('utf-8')
 
                         if tag_name == 'GPSLatitude':
                             v = exif_dict['GPS'][tag]
@@ -341,10 +341,10 @@ def create_app(config=None):
                             lat_min = v[1][0] / v[1][1]
                             lat_sec = v[2][0] / v[2][1]
 
-                            exif_data[const.T_GPS_LATITUDE] = f'{lat_deg:.2f}/{lat_min:.2f}/{lat_sec:.3f}'
+                            exif_data[T_GPS_LATITUDE] = f'{lat_deg:.2f}/{lat_min:.2f}/{lat_sec:.3f}'
 
                         if tag_name == 'GPSLongitudeRef':
-                            exif_data[const.T_GPS_LONGITUDE_REF] = exif_dict['GPS'][tag].decode('utf-8')
+                            exif_data[T_GPS_LONGITUDE_REF] = exif_dict['GPS'][tag].decode('utf-8')
 
                         if tag_name == 'GPSLongitude':
                             v = exif_dict['GPS'][tag]
@@ -353,10 +353,10 @@ def create_app(config=None):
                             lon_min = v[1][0] / v[1][1]
                             lon_sec = v[2][0] / v[2][1]
 
-                            exif_data[const.T_GPS_LONGITUDE] = f'{lon_deg:.2f}/{lon_min:.2f}/{lon_sec:.3f}'
+                            exif_data[T_GPS_LONGITUDE] = f'{lon_deg:.2f}/{lon_min:.2f}/{lon_sec:.3f}'
 
                         if tag_name == 'GPSDateStamp':
-                            exif_data[const.T_GPS_TS_DATE] = exif_dict['GPS'][tag].decode('utf-8').strip()
+                            exif_data[T_GPS_TS_DATE] = exif_dict['GPS'][tag].decode('utf-8').strip()
 
                         if tag_name == 'GPSTimeStamp':
                             v = exif_dict['GPS'][tag]
@@ -365,10 +365,10 @@ def create_app(config=None):
                             ts_mm = v[1][0] / v[1][1]
                             ts_ss = v[2][0] / v[2][1]
 
-                            exif_data[const.T_GPS_TS_TIME] = f'{ts_hh:2.0f}:{ts_mm:2.0f}:{ts_ss:4.2f}'
+                            exif_data[T_GPS_TS_TIME] = f'{ts_hh:2.0f}:{ts_mm:2.0f}:{ts_ss:4.2f}'
 
                         if tag_name == 'GPSMapDatum':
-                            exif_data[const.T_GPS_MAP_DATUM] = exif_dict['GPS'][tag].decode('utf-8').strip()
+                            exif_data[T_GPS_MAP_DATUM] = exif_dict['GPS'][tag].decode('utf-8').strip()
 
         info['data'] = exif_data
 
@@ -425,7 +425,7 @@ def create_app(config=None):
 
                 # Collect files with supported extensions
                 if os.path.isfile(item_full):
-                    if item.lower().endswith(const.EXTN_SUPPORTED):
+                    if item.lower().endswith(EXTN_SUPPORTED):
                         files.append(item_link)
 
                 # Collect directories (albums)
