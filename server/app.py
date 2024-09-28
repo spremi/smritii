@@ -17,7 +17,7 @@ import json
 import os
 import piexif
 
-from .cache import Cache
+from local.cache import Cache
 from . import constants as const
 
 BASE_ALBUM = ''
